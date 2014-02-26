@@ -10,6 +10,14 @@
         if (!model._lastXHR)
             model._lastXHR = {};
 
-        return model._lastXHR[method] = sync.apply(this, arguments);
+        var newXHR = model._lastXHR[method] = sync.apply(this, arguments);
+
+        newXHR.always(function() {
+            if(newXHR === model._lastXHR[method]) {
+                delete model._lastXHR[method];
+            }
+        });
+
+        return newXHR;
     };
 })(window._, window.Backbone);
